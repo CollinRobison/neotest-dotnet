@@ -84,6 +84,7 @@ describe("create_specs", function()
   end)
 
   after_each(function()
+    vim.g.neotest_dotnet_runsettings_path = nil
     lib.files.match_root_pattern:revert()
     vim.fn.tempname:revert()
   end)
@@ -163,6 +164,31 @@ describe("create_specs", function()
     end)
 
     assert.is_nil(BuildSpecUtils.create_specs(tree))
+  end)
+
+  it("should preserve additional arguments and runsettings", function()
+    vim.g.neotest_dotnet_runsettings_path = "/home/tests/test.runsettings"
+    local tree = Tree.from_list({
+      {
+        id = "/home/tests/MsTests.cs::Fixtures::Smoke",
+        name = "Smoke",
+        path = "/home/tests/MsTests.cs",
+        range = { 1, 0, 2, 0 },
+        type = "test",
+      },
+    }, function(pos)
+      return pos.id
+    end)
+
+    local result = BuildSpecUtils.create_specs(tree, nil, { "--framework net10.0" })
+
+    assert.equal(1, #result)
+    assert.equal(
+      'dotnet test /dummy/path/to/proj --filter FullyQualifiedName~"Fixtures.Smoke"'
+        .. ' --results-directory /tmp/output --logger "trx;logfilename=test_result.trx"'
+        .. ' --framework net10.0 --settings /home/tests/test.runsettings',
+      result[1].command
+    )
   end)
 
   it("should create a fully-qualified file filter for MSTest", function()

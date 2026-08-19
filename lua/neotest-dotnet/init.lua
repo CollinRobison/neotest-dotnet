@@ -11,7 +11,7 @@ local discovery_root = "project"
 
 DotnetNeotestAdapter.root = function(path)
   if discovery_root == "solution" then
-    return lib.files.match_root_pattern("*.sln")(path)
+    return lib.files.match_root_pattern("*.sln", "*.slnx")(path)
   else
     return lib.files.match_root_pattern("*.csproj", "*.fsproj")(path)
   end
@@ -198,16 +198,22 @@ setmetatable(DotnetNeotestAdapter, {
 
     local function find_runsettings_files()
       local files = {}
-      for _, runsettingsFile in
-        ipairs(vim.fn.glob(vim.fn.getcwd() .. "**/*.runsettings", false, true))
-      do
-        table.insert(files, runsettingsFile)
-      end
+      local seen = {}
+      local cwd = vim.fn.getcwd()
+      local patterns = {
+        cwd .. "/*.runsettings",
+        cwd .. "/**/*.runsettings",
+        cwd .. "/.runsettings",
+        cwd .. "/**/.runsettings",
+      }
 
-      for _, runsettingsFile in
-        ipairs(vim.fn.glob(vim.fn.getcwd() .. "**/.runsettings", false, true))
-      do
-        table.insert(files, runsettingsFile)
+      for _, pattern in ipairs(patterns) do
+        for _, runsettings_file in ipairs(vim.fn.glob(pattern, false, true)) do
+          if not seen[runsettings_file] then
+            seen[runsettings_file] = true
+            table.insert(files, runsettings_file)
+          end
+        end
       end
 
       return files
