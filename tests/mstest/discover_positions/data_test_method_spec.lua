@@ -1,5 +1,9 @@
 local async = require("nio").tests
-local plugin = require("neotest-dotnet")
+local plugin = require("neotest-dotnet")({
+  custom_attributes = {
+    mstest = { "CustomTestMethod" },
+  },
+})
 
 local function collect_tests(items, tests)
   for _, item in ipairs(items) do
@@ -14,7 +18,7 @@ end
 describe("MSTest discovery", function()
   require("neotest").setup({
     adapters = {
-      require("neotest-dotnet"),
+      plugin,
     },
   })
 
@@ -25,5 +29,13 @@ describe("MSTest discovery", function()
     table.sort(tests)
 
     assert.same({ "Adds", "Adds(1)", "Adds(2)", "Smoke" }, tests)
+  end)
+
+  async.it("discovers configured custom test attributes", function()
+    local positions = plugin.discover_positions("./tests/mstest/specs/custom_attribute.cs"):to_list()
+    local tests = {}
+    collect_tests(positions, tests)
+
+    assert.same({ "CustomTest" }, tests)
   end)
 end)
