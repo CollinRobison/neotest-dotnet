@@ -186,7 +186,7 @@ describe("create_specs", function()
     assert.equal(
       'dotnet test /dummy/path/to/proj --filter FullyQualifiedName~"Fixtures.Smoke"'
         .. ' --results-directory /tmp/output --logger "trx;logfilename=test_result.trx"'
-        .. ' --framework net10.0 --settings /home/tests/test.runsettings',
+        .. " --framework net10.0 --settings /home/tests/test.runsettings",
       result[1].command
     )
   end)

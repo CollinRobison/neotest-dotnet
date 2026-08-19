@@ -61,8 +61,10 @@ DotnetNeotestAdapter._build_position = function(...)
   logger.debug("neotest-dotnet: Buil Position Args: ")
   logger.debug(args)
 
-  local framework =
-    FrameworkDiscovery.get_test_framework_utils_from_source(args[2], custom_attribute_args) -- args[2] is the content of the file
+  local framework = FrameworkDiscovery.get_test_framework_utils_from_source(
+    args[2],
+    custom_attribute_args
+  ) -- args[2] is the content of the file
     or require("neotest-dotnet.xunit")
 
   logger.debug("neotest-dotnet: Framework: ")
@@ -82,9 +84,10 @@ end
 ---@return neotest.Tree
 DotnetNeotestAdapter.discover_positions = function(path)
   local content = lib.files.read(path)
-  local test_framework =
-    FrameworkDiscovery.get_test_framework_utils_from_source(content, custom_attribute_args)
-    or require("neotest-dotnet.xunit")
+  local test_framework = FrameworkDiscovery.get_test_framework_utils_from_source(
+    content,
+    custom_attribute_args
+  ) or require("neotest-dotnet.xunit")
   local framework_queries = test_framework.get_treesitter_queries(custom_attribute_args)
 
   local query = [[

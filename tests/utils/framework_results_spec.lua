@@ -82,10 +82,9 @@ describe("TRX result collection", function()
       assert.equal(result_path, results[path .. "::Fixtures::ResultTests::Passed"].output)
       assert.equal("failed", results[path .. "::Fixtures::ResultTests::Failed"].status)
       assert.equal("skipped", results[path .. "::Fixtures::ResultTests::Skipped"].status)
-      assert.same(
-        { message = "Fixtures.ResultTests.Failed: assertion failed\nat Fixtures.ResultTests.Failed()" },
-        results[path .. "::Fixtures::ResultTests::Failed"].errors[1]
-      )
+      assert.same({
+        message = "Fixtures.ResultTests.Failed: assertion failed\nat Fixtures.ResultTests.Failed()",
+      }, results[path .. "::Fixtures::ResultTests::Failed"].errors[1])
     end)
   end
 end)

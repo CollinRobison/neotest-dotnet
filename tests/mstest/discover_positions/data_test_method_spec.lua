@@ -23,7 +23,8 @@ describe("MSTest discovery", function()
   })
 
   async.it("discovers DataRow cases and ordinary TestMethod tests", function()
-    local positions = plugin.discover_positions("./tests/mstest/specs/data_test_method.cs"):to_list()
+    local positions =
+      plugin.discover_positions("./tests/mstest/specs/data_test_method.cs"):to_list()
     local tests = {}
     collect_tests(positions, tests)
     table.sort(tests)
@@ -32,7 +33,8 @@ describe("MSTest discovery", function()
   end)
 
   async.it("discovers configured custom test attributes", function()
-    local positions = plugin.discover_positions("./tests/mstest/specs/custom_attribute.cs"):to_list()
+    local positions =
+      plugin.discover_positions("./tests/mstest/specs/custom_attribute.cs"):to_list()
     local tests = {}
     collect_tests(positions, tests)
 
