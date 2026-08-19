@@ -10,7 +10,12 @@ local fixtures = {
     project = "NUnitFixture",
     file = "ResultTests.cs",
     runsettings = "test.runsettings",
-    expected = { Passing = "passed", Failing = "failed", Skipped = "skipped" },
+    expected = {
+      Passing = "passed",
+      Failing = "failed",
+      Skipped = "skipped",
+      TheoryCases = "passed",
+    },
   },
   {
     framework = "xunit",

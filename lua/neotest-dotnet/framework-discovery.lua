@@ -22,6 +22,7 @@ M.xunit_test_attributes = {
 
 M.nunit_test_attributes = {
   "Test",
+  "Theory",
   "TestCase",
   "TestCaseSource",
 }
@@ -127,7 +128,9 @@ function M.get_test_framework_utils_from_source(source, custom_attribute_args)
         and vim.treesitter.get_node_text(capture, source)
       or vim.treesitter.query.get_node_text(capture, source)
     if test_attribute then
-      if
+      if test_attribute == "Theory" and source:find("using%s+NUnit%.Framework%s*;") then
+        return nunit
+      elseif
         string.find(xunit_attributes, test_attribute)
         or string.find(test_attribute, "SkippableFactAttribute")
       then

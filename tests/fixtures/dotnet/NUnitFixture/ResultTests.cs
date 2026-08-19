@@ -13,4 +13,9 @@ public class ResultTests
     [Test]
     [Ignore("intentional NUnit integration skip")]
     public void Skipped() { }
+
+    [Theory]
+    [TestCase(1)]
+    [TestCase(2)]
+    public void TheoryCases(int value) => Assert.That(value, Is.GreaterThan(0));
 }
