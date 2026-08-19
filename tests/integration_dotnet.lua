@@ -19,6 +19,16 @@ local fixtures = {
     expected = { Passing = "passed", Failing = "failed", Skipped = "skipped" },
   },
   {
+    framework = "xunit rich results",
+    project = "XUnitFixture",
+    file = "RichResultTests.cs",
+    expected = {
+      CustomDisplayName = "passed",
+      ExceptionWithOutput = "failed",
+      Parameterized = "failed",
+    },
+  },
+  {
     framework = "mstest",
     project = "MSTestFixture",
     file = "ResultTests.cs",
@@ -74,6 +84,12 @@ nio.run(function()
         result.status == expected_status,
         fixture.framework .. " " .. name .. " status mismatch"
       )
+      if fixture.file == "RichResultTests.cs" and name == "ExceptionWithOutput" then
+        assert(#result.errors > 0 and result.errors[1].message:find("exception sentinel", 1, true))
+        local output = table.concat(vim.fn.readfile(result.output), "\n")
+        assert(output:find("stdout sentinel", 1, true))
+        assert(output:find("stderr sentinel", 1, true))
+      end
     end
   end
 end)

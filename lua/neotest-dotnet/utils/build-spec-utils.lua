@@ -34,7 +34,7 @@ function BuildSpecUtils.create_single_spec(position, proj_root, filter_arg, dotn
   filter_arg = filter_arg or ""
 
   local function quote_if_needed(value)
-    return value:find("%s") and vim.fn.shellescape(value) or value
+    return value:find("[^%w%-%._/%+:]") and vim.fn.shellescape(value) or value
   end
 
   local command = {
