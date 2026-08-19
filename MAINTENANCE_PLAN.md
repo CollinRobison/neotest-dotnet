@@ -31,6 +31,7 @@ The first maintenance pass is implemented on the `maintenance/baseline` branch. 
 - Added coverage for runsettings, additional `dotnet test` arguments, `.slnx` roots, empty files, framework discovery, and result states.
 - Added clear errors for missing `nvim-dap` or an unconfigured DAP adapter.
 - Added a real .NET integration target that runs NUnit, xUnit, and MSTest projects through adapter discovery, `build_spec`, and `results`; it validates passed, failed, and skipped result states and file-scoped MSTest identities.
+- Verified an initial live DAP smoke test: NUnit attaches through `nvim-dap` and `netcoredbg`, initializes, exits, and terminates cleanly.
 - Local `make test` and `make lint` pass. GitHub CI passes the compatibility matrix and lint job.
 
 ### Still required
