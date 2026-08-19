@@ -30,15 +30,13 @@ The first maintenance pass is implemented on the `maintenance/baseline` branch. 
 - Added discovery behavior for files without test attributes and actionable errors when a runnable test has no `.csproj`.
 - Added coverage for runsettings, additional `dotnet test` arguments, `.slnx` roots, empty files, framework discovery, and result states.
 - Added clear errors for missing `nvim-dap` or an unconfigured DAP adapter.
+- Added a real .NET integration target that runs NUnit, xUnit, and MSTest projects through adapter discovery, `build_spec`, and `results`; it validates passed, failed, and skipped result states and file-scoped MSTest identities.
 - Local `make test` and `make lint` pass. GitHub CI passes the compatibility matrix and lint job.
 
 ### Still required
 
-- The real .NET integration fixture work is not complete. Uncommitted exploratory fixtures exist under `tests/fixtures/dotnet/`; review them before committing and remove generated `bin/`, `obj/`, and `TestResults/` directories.
-- Add a committed integration target that runs real NUnit, xUnit, and MSTest projects through the adapter, not only through `dotnet test` directly.
-- Fix the discovered MSTest end-to-end identity mismatch: file-scoped namespace/class positions did not map back to the TRX result identities in the exploratory run.
-- Add real fixture coverage for project layouts listed in Phase 2: solutions with multiple projects, nested projects, `global.json`, `Directory.Build.props`, multiple target frameworks, and `.runsettings`.
-- Validate real pass, fail, skipped, stdout/stderr, exceptions, unusual display names, no-match runs, and parameterized results through `adapter.build_spec` and `adapter.results`.
+- Expand the real fixture matrix for Phase 2 layouts: solutions with multiple projects, nested projects, `global.json`, `Directory.Build.props`, multiple target frameworks, and `.runsettings`.
+- Extend end-to-end result coverage for stdout/stderr, exceptions, unusual display names, no-match runs, and parameterized results.
 - Complete DAP validation with `netcoredbg`: NUnit, xUnit, and MSTest sessions; file/method requests; breakpoints; variables; output; failed attach; clean termination; and parameterized tests.
 - Review temporary result/output cleanup and command argument quoting with real projects.
 - Update fork-facing README links and documentation, add a changelog entry, assign the first maintained version, and define the release checklist.

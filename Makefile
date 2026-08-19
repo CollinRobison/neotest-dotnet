@@ -10,6 +10,10 @@ test:
 	nvim --version | head -n 1 && echo ''
 	./tests/test.sh
 
+# runs real NUnit, xUnit, and MSTest projects through adapter discovery, build_spec, and results.
+integration-test:
+	nvim --headless --clean --noplugin -u ./tests/minimal_init.lua -l ./tests/integration_dotnet.lua
+
 # installs `mini.nvim`, used for both the tests and documentation.
 deps:
 	@mkdir -p deps

@@ -264,3 +264,11 @@ To run the plenary tests from CLI, in the root folder, run
 ```
 make test
 ```
+
+To run the real .NET integration fixtures (NUnit, xUnit, and MSTest) through adapter discovery, `build_spec`, and result parsing, run:
+
+```
+make integration-test
+```
+
+This target requires a `dotnet` SDK on `PATH`. Each fixture intentionally includes one failing and one skipped test so result-state mapping is verified.
