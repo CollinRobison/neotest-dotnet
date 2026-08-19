@@ -191,6 +191,31 @@ describe("create_specs", function()
     )
   end)
 
+  it("should report a missing project for a runnable test", function()
+    lib.files.match_root_pattern:revert()
+    stub(lib.files, "match_root_pattern", function()
+      return function()
+        return nil
+      end
+    end)
+
+    local tree = Tree.from_list({
+      {
+        id = "/home/tests/MsTests.cs::Fixtures::Smoke",
+        name = "Smoke",
+        path = "/home/tests/MsTests.cs",
+        range = { 1, 0, 2, 0 },
+        type = "test",
+      },
+    }, function(pos)
+      return pos.id
+    end)
+
+    assert.has_error(function()
+      BuildSpecUtils.create_specs(tree)
+    end, "neotest-dotnet: no .csproj found for /home/tests/MsTests.cs")
+  end)
+
   it("should create a fully-qualified file filter for MSTest", function()
     local tree = Tree.from_list({
       {

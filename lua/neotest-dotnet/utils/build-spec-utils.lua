@@ -26,6 +26,10 @@ end
 ---@param filter_arg string The filter argument to pass to the dotnet test command
 ---@param dotnet_additional_args table Any additional arguments to pass to the dotnet test command
 function BuildSpecUtils.create_single_spec(position, proj_root, filter_arg, dotnet_additional_args)
+  if not proj_root or proj_root == "" then
+    error("neotest-dotnet: no .csproj found for " .. position.path)
+  end
+
   local results_path = async.fn.tempname() .. ".trx"
   filter_arg = filter_arg or ""
 
