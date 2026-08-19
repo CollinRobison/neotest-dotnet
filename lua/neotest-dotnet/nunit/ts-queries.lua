@@ -58,7 +58,7 @@ function M.get_queries(custom_attributes)
         (attribute
           name: (identifier) @attribute_name (#match? @attribute_name "^TestCase")
         )
-      )+
+      )
       name: (identifier) @test.parameterized.name
       parameters: (parameter_list
         (parameter

@@ -5,6 +5,7 @@ local NodeTreeUtils = require("neotest-dotnet.utils.neotest-node-tree-utils")
 ---@type FrameworkUtils
 ---@diagnostic disable-next-line: missing-fields
 local M = {}
+local parameterized_definitions = {}
 
 ---Builds a position from captured nodes, optionally parsing parameters to create sub-positions.
 ---@param base_node table The initial root node to build the positions from
@@ -33,6 +34,13 @@ local build_parameterized_test_positions = function(base_node, source, captured_
     or vim.treesitter.parse_query("c_sharp", query)
 
   -- Set type to test (otherwise it will be test.parameterized)
+  local definition = captured_nodes[match_type .. ".definition"]
+  local definition_key = table.concat({ definition:range() }, ":")
+  if parameterized_definitions[definition_key] then
+    return nil
+  end
+  parameterized_definitions[definition_key] = true
+
   local parameterized_test_node = vim.tbl_extend("force", base_node, { type = "test" })
   local nodes = { parameterized_test_node }
 
@@ -78,6 +86,7 @@ local get_match_type = function(captured_nodes)
 end
 
 function M.get_treesitter_queries(custom_attribute_args)
+  parameterized_definitions = {}
   return require("neotest-dotnet.nunit.ts-queries").get_queries(custom_attribute_args)
 end
 
@@ -94,6 +103,13 @@ M.build_position = function(file_path, source, captured_nodes)
   -- Swap the match type back to "namespace" so neotest core can handle it properly
   if match_type == "class" then
     match_type = "namespace"
+  end
+
+  if match_type == "test" then
+    local definition_text = vim.treesitter.get_node_text(definition, source)
+    if definition_text:find("%[TestCase[%s%(]") then
+      return nil
+    end
   end
 
   local node = {
