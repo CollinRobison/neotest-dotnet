@@ -265,3 +265,11 @@ make integration-test
 ```
 
 This target requires a `dotnet` SDK on `PATH`. Each fixture intentionally includes one failing and one skipped test so result-state mapping is verified.
+
+For an opt-in real DAP attach smoke test across NUnit, xUnit, and MSTest, provide paths to `nvim-dap` and `netcoredbg`:
+
+```
+DAP_RTP=/path/to/nvim-dap NETCOREDBG=/path/to/netcoredbg make dap-smoke
+```
+
+The smoke target runs a passing method from each framework, verifies a DAP session initializes and terminates, and requires `dotnet` on `PATH`.

@@ -14,6 +14,11 @@ test:
 integration-test:
 	nvim --headless --clean --noplugin -u ./tests/minimal_init.lua -l ./tests/integration_dotnet.lua
 
+# runs opt-in real netcoredbg attach sessions; requires DAP_RTP and NETCOREDBG paths.
+dap-smoke:
+	test -n "$(DAP_RTP)" && test -n "$(NETCOREDBG)"
+	nvim --headless --clean --noplugin -u ./tests/minimal_init.lua --cmd "set rtp+=$(DAP_RTP)" -l ./tests/dap_smoke.lua
+
 # installs `mini.nvim`, used for both the tests and documentation.
 deps:
 	@mkdir -p deps
