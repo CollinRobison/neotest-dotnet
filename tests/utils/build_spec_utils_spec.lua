@@ -149,6 +149,40 @@ describe("create_specs", function()
     assert_spec_matches(expected_specs[1], result[1])
   end)
 
+  it("should create a fully-qualified file filter for MSTest", function()
+    local tree = Tree.from_list({
+      {
+        id = "/home/tests/MsTests.cs",
+        name = "MsTests.cs",
+        path = "/home/tests/MsTests.cs",
+        range = { 0, 0, 10, 0 },
+        type = "file",
+      },
+      {
+        {
+          id = "/home/tests/MsTests.cs::MsTests",
+          name = "MsTests",
+          path = "/home/tests/MsTests.cs",
+          range = { 0, 0, 10, 0 },
+          type = "namespace",
+          is_class = true,
+          framework = "mstest",
+        },
+      },
+    }, function(pos)
+      return pos.id
+    end)
+
+    local result = BuildSpecUtils.create_specs(tree)
+
+    assert.equal(1, #result)
+    assert.equal(
+      'dotnet test /dummy/path/to/proj --filter "FullyQualifiedName~MsTests"'
+        .. ' --results-directory /tmp/output --logger "trx;logfilename=test_result.trx"',
+      result[1].command
+    )
+  end)
+
   async.it("should return the correct specs when the position is 'namespace' type", function()
     local expected_specs = {
       {

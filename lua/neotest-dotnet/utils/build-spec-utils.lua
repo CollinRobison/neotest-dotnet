@@ -112,7 +112,7 @@ function BuildSpecUtils.create_specs(tree, specs, dotnet_additional_args)
     for _, child in tree:iter_nodes() do
       local data = child:data()
       if data.is_class then
-        if data.framework == "xunit" then
+        if data.framework == "xunit" or data.framework == "mstest" then
           table.insert(filter, "FullyQualifiedName~" .. data.name)
         elseif data.framework == "nunit" then
           table.insert(filter, "Name~" .. data.name)
