@@ -31,16 +31,15 @@ The first maintenance pass is implemented on the `maintenance/baseline` branch. 
 - Added coverage for runsettings, additional `dotnet test` arguments, `.slnx` roots, empty files, framework discovery, and result states.
 - Added clear errors for missing `nvim-dap` or an unconfigured DAP adapter.
 - Added a real .NET integration target that runs NUnit, xUnit, and MSTest projects through adapter discovery, `build_spec`, and `results`; it validates passed, failed, and skipped result states and file-scoped MSTest identities.
-- Verified live DAP attach smoke tests for NUnit, xUnit, and MSTest passing-method sessions through `nvim-dap` and `netcoredbg`; each initializes, exits, and terminates cleanly.
+- Added and executed a real layout matrix: a multi-project solution with a nested project, `global.json`, inherited `Directory.Build.props`, a `net10.0;net9.0` project, and `.runsettings`.
+- Added real DAP smoke coverage for NUnit, xUnit, and MSTest method requests plus a file-level breakpoint and variable inspection; missing, unconfigured, and unavailable debugger dependencies give actionable errors.
 - Local `make test` and `make lint` pass. GitHub CI passes the compatibility matrix and lint job.
 
 ### Still required
 
-- Expand the real fixture matrix for Phase 2 layouts: solutions with multiple projects, nested projects, `global.json`, `Directory.Build.props`, multiple target frameworks, and `.runsettings`.
 - Extend end-to-end result coverage for stdout/stderr, exceptions, unusual display names, no-match runs, and parameterized results.
-- Complete DAP validation with `netcoredbg`: NUnit, xUnit, and MSTest sessions; file/method requests; breakpoints; variables; output; failed attach; clean termination; and parameterized tests.
+- Extend the DAP smoke matrix to test test-host output and parameterized-test debug behavior.
 - Review temporary result/output cleanup and command argument quoting with real projects.
-- Update fork-facing README links and documentation, add a changelog entry, assign the first maintained version, and define the release checklist.
 
 The compatibility work is therefore in good shape, but the first maintained release is not ready until the real .NET integration and DAP work are complete.
 

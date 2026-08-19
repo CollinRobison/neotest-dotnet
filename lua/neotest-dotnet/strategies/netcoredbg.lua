@@ -13,8 +13,18 @@ return function(spec)
   end
 
   local adapter_name = spec.dap and spec.dap.adapter_name or "netcoredbg"
-  if not dap.adapters[adapter_name] then
+  local configured_adapter = dap.adapters[adapter_name]
+  if not configured_adapter then
     error("neotest-dotnet: configure the nvim-dap adapter '" .. adapter_name .. "' first")
+  end
+  if
+    type(configured_adapter) == "table"
+    and configured_adapter.type == "executable"
+    and (not configured_adapter.command or vim.fn.executable(configured_adapter.command) == 0)
+  then
+    error(
+      "neotest-dotnet: netcoredbg executable is unavailable for adapter '" .. adapter_name .. "'"
+    )
   end
 
   local data_accum = FanoutAccum(function(prev, new)

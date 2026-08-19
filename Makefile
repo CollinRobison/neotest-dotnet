@@ -14,6 +14,10 @@ test:
 integration-test:
 	nvim --headless --clean --noplugin -u ./tests/minimal_init.lua -l ./tests/integration_dotnet.lua
 
+# runs real solution-root, nested-project, global.json, Directory.Build.props, multi-target, and runsettings fixtures.
+layout-integration-test:
+	nvim --headless --clean --noplugin -u ./tests/minimal_init.lua -l ./tests/layout_integration.lua
+
 # runs opt-in real netcoredbg attach sessions; requires DAP_RTP and NETCOREDBG paths.
 dap-smoke:
 	test -n "$(DAP_RTP)" && test -n "$(NETCOREDBG)"

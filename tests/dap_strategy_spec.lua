@@ -30,4 +30,18 @@ describe("netcoredbg strategy configuration", function()
       strategy({ dap = { adapter_name = "netcoredbg" } })
     end, "neotest-dotnet: configure the nvim-dap adapter 'netcoredbg' first")
   end)
+
+  it("reports an unavailable netcoredbg executable", function()
+    package.preload.dap = function()
+      return {
+        adapters = {
+          netcoredbg = { type = "executable", command = "/definitely/missing/netcoredbg" },
+        },
+      }
+    end
+    local strategy = require("neotest-dotnet.strategies.netcoredbg")
+    assert.has_error(function()
+      strategy({ dap = { adapter_name = "netcoredbg" } })
+    end, "neotest-dotnet: netcoredbg executable is unavailable for adapter 'netcoredbg'")
+  end)
 end)

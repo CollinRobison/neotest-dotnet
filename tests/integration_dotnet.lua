@@ -1,6 +1,8 @@
 local nio = require("nio")
 local adapter_factory = require("neotest-dotnet")
 
+dofile("./tests/layout_integration.lua")
+
 local fixture_root = vim.fn.getcwd() .. "/tests/fixtures/dotnet"
 local fixtures = {
   {
