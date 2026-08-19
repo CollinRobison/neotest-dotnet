@@ -17,6 +17,14 @@ describe("root when using solution option", function()
     assert.equal(vim.fs.normalize(vim.fn.fnamemodify(dir, ":p")), root)
   end)
 
+  async.it("should return the .slnx dir when it exists and path contains it", function()
+    local plugin = require("neotest-dotnet")
+    local dir = "./tests/solutionx_dir"
+    local root = plugin.root(dir)
+
+    assert.equal(vim.fs.normalize(vim.fn.fnamemodify(dir, ":p")), root)
+  end)
+
   async.it("should return nil when neither path nor parents contain .sln file", function()
     local plugin = require("neotest-dotnet")
     local dir = "./tests/project_dir"
