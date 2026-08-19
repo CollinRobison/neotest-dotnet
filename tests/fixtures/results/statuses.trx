@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestRun>
+  <Results>
+    <UnitTestResult testId="passed-id" testName="Fixtures.ResultTests.Passed" outcome="Passed">
+      <Output><StdOut>pass output</StdOut></Output>
+    </UnitTestResult>
+    <UnitTestResult testId="failed-id" testName="Fixtures.ResultTests.Failed" outcome="Failed">
+      <Output>
+        <StdOut>failure output</StdOut>
+        <ErrorInfo><Message>assertion failed</Message><StackTrace>at Fixtures.ResultTests.Failed()</StackTrace></ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult testId="skipped-id" testName="Fixtures.ResultTests.Skipped" outcome="NotExecuted" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Fixtures.ResultTests.Passed" id="passed-id">
+      <TestMethod className="Fixtures.ResultTests" name="Passed" />
+    </UnitTest>
+    <UnitTest name="Fixtures.ResultTests.Failed" id="failed-id">
+      <TestMethod className="Fixtures.ResultTests" name="Failed" />
+    </UnitTest>
+    <UnitTest name="Fixtures.ResultTests.Skipped" id="skipped-id">
+      <TestMethod className="Fixtures.ResultTests" name="Skipped" />
+    </UnitTest>
+  </TestDefinitions>
+</TestRun>

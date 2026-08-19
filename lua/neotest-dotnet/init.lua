@@ -63,6 +63,7 @@ DotnetNeotestAdapter._build_position = function(...)
 
   local framework =
     FrameworkDiscovery.get_test_framework_utils_from_source(args[2], custom_attribute_args) -- args[2] is the content of the file
+    or require("neotest-dotnet.xunit")
 
   logger.debug("neotest-dotnet: Framework: ")
   logger.debug(framework)
@@ -83,6 +84,7 @@ DotnetNeotestAdapter.discover_positions = function(path)
   local content = lib.files.read(path)
   local test_framework =
     FrameworkDiscovery.get_test_framework_utils_from_source(content, custom_attribute_args)
+    or require("neotest-dotnet.xunit")
   local framework_queries = test_framework.get_treesitter_queries(custom_attribute_args)
 
   local query = [[
@@ -135,6 +137,11 @@ DotnetNeotestAdapter.build_spec = function(args)
   local additional_args = args.dotnet_additional_args or dotnet_additional_args or nil
 
   local specs = build_spec_utils.create_specs(args.tree, nil, additional_args)
+
+  if not specs then
+    logger.debug("neotest-dotnet: No runnable test specs were created")
+    return nil
+  end
 
   logger.debug("neotest-dotnet: Created " .. #specs .. " specs, with contents: ")
   logger.debug(specs)

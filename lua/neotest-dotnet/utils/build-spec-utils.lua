@@ -131,7 +131,10 @@ function BuildSpecUtils.create_specs(tree, specs, dotnet_additional_args)
     end
   end
 
-  return #specs < 0 and nil or specs
+  if #specs == 0 then
+    return nil
+  end
+  return specs
 end
 
 return BuildSpecUtils

@@ -6,6 +6,17 @@ local logger = require("neotest.logging")
 local DotNetUtils = {}
 
 function DotNetUtils.get_test_full_names(project_path)
+  if not project_path then
+    return {
+      is_complete = function()
+        return true
+      end,
+      result = function()
+        return { result_code = 1, output = {} }
+      end,
+    }
+  end
+
   vim.g.neotest_dotnet_test_full_names_cache = vim.g.neotest_dotnet_test_full_names_cache or {}
   local cache = vim.g.neotest_dotnet_test_full_names_cache or {}
 

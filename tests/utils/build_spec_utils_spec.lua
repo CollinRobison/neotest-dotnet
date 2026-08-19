@@ -149,6 +149,22 @@ describe("create_specs", function()
     assert_spec_matches(expected_specs[1], result[1])
   end)
 
+  it("should return nil when a file contains no runnable test classes", function()
+    local tree = Tree.from_list({
+      {
+        id = "/home/tests/Empty.cs",
+        name = "Empty.cs",
+        path = "/home/tests/Empty.cs",
+        range = { 0, 0, 1, 0 },
+        type = "file",
+      },
+    }, function(pos)
+      return pos.id
+    end)
+
+    assert.is_nil(BuildSpecUtils.create_specs(tree))
+  end)
+
   it("should create a fully-qualified file filter for MSTest", function()
     local tree = Tree.from_list({
       {

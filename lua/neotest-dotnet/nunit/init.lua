@@ -183,27 +183,16 @@ M.generate_test_results = function(output_file_path, tree, context_id)
   local intermediate_results
 
   if test_results and test_definitions then
-    if #test_results.UnitTestResult > 1 then
-      test_results = test_results.UnitTestResult
-    end
-    if #test_definitions.UnitTest > 1 then
-      test_definitions = test_definitions.UnitTest
-    end
+    test_results = TrxUtils.as_list(test_results.UnitTestResult)
+    test_definitions = TrxUtils.as_list(test_definitions.UnitTest)
 
     intermediate_results = {}
 
-    local outcome_mapper = {
-      Passed = "passed",
-      Failed = "failed",
-      Skipped = "skipped",
-      NotExecuted = "skipped",
-    }
-
-    for _, value in pairs(test_results) do
+    for _, value in ipairs(test_results) do
       local qualified_test_name
 
       if value._attr.testId ~= nil then
-        for _, test_definition in pairs(test_definitions) do
+        for _, test_definition in ipairs(test_definitions) do
           if test_definition._attr.id ~= nil then
             if value._attr.testId == test_definition._attr.id then
               local dot_index = string.find(test_definition._attr.name, "%.")
@@ -231,7 +220,7 @@ M.generate_test_results = function(output_file_path, tree, context_id)
 
       if value._attr.testName ~= nil then
         local error_info
-        local outcome = outcome_mapper[value._attr.outcome]
+        local outcome = TrxUtils.map_outcome(value._attr.outcome)
         local has_errors = value.Output and value.Output.ErrorInfo or nil
 
         if has_errors and outcome == "failed" then
@@ -239,7 +228,7 @@ M.generate_test_results = function(output_file_path, tree, context_id)
           error_info = value.Output.ErrorInfo.Message .. "\n" .. stackTrace
         end
         local intermediate_result = {
-          status = string.lower(outcome),
+          status = outcome,
           raw_output = value.Output and value.Output.StdOut or outcome,
           test_name = qualified_test_name,
           error_info = error_info,
@@ -278,7 +267,7 @@ M.generate_test_results = function(output_file_path, tree, context_id)
       end
 
       -- Use the full_name of the test, including namespace
-      local is_match = #result_test_name == #node_data.full_name
+      local is_match = result_test_name == node_data.full_name
         or string.find(result_test_name, node_data.full_name, 0, true)
 
       if is_match then

@@ -10,6 +10,25 @@ local function remove_bom(str)
   return str
 end
 
+M.as_list = function(value)
+  if type(value) ~= "table" then
+    return {}
+  end
+  if value._attr then
+    return { value }
+  end
+  return value
+end
+
+M.map_outcome = function(outcome)
+  return ({
+    Passed = "passed",
+    Failed = "failed",
+    Skipped = "skipped",
+    NotExecuted = "skipped",
+  })[outcome] or "failed"
+end
+
 M.parse_trx = function(output_file)
   logger.info("Parsing trx file: " .. output_file)
   local success, xml = pcall(lib.files.read, output_file)
