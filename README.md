@@ -1,18 +1,11 @@
 <p align="center">
-<a href="https://github.com/Issafalcon/neotest-dotnet/actions/workflows/main.yml">
-  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/Issafalcon/neotest-dotnet/main.yml?label=main&style=for-the-badge">
+<a href="https://github.com/CollinRobison/neotest-dotnet/actions/workflows/main.yml">
+  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/CollinRobison/neotest-dotnet/main.yml?label=main&style=for-the-badge">
 </a>
-<a href="https://github.com/Issafalcon/neotest-dotnet/releases">
-  <img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/Issafalcon/neotest-dotnet?style=for-the-badge">
-</a>
-<a href="https://luarocks.org/modules/Issafalcon/neotest-dotnet">
-  <img alt="LuaRocks Pacakage" src="https://img.shields.io/luarocks/v/Issafalcon/neotest-dotnet?logo=lua&color=purple&style=for-the-badge">
+<a href="https://github.com/CollinRobison/neotest-dotnet/releases">
+  <img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/CollinRobison/neotest-dotnet?style=for-the-badge">
 </a>
 </p>
-
-# Looking for new maintainers!
-
-Please see https://github.com/Issafalcon/neotest-dotnet/discussions/142 for more details and background behind this move.
 
 # Neotest .NET
 
@@ -42,7 +35,7 @@ neotest-dotnet requires makes a number of assumptions about your environment:
     "nvim-neotest/neotest",
     requires = {
       {
-        "Issafalcon/neotest-dotnet",
+        "CollinRobison/neotest-dotnet",
       },
     }
   })
@@ -52,7 +45,7 @@ neotest-dotnet requires makes a number of assumptions about your environment:
 
 ```vim
     Plug 'https://github.com/nvim-neotest/neotest'
-    Plug 'https://github.com/Issafalcon/neotest-dotnet'
+    Plug 'https://github.com/CollinRobison/neotest-dotnet'
 ```
 
 # Usage

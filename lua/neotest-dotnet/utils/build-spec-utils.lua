@@ -33,13 +33,17 @@ function BuildSpecUtils.create_single_spec(position, proj_root, filter_arg, dotn
   local results_path = async.fn.tempname() .. ".trx"
   filter_arg = filter_arg or ""
 
+  local function quote_if_needed(value)
+    return value:find("%s") and vim.fn.shellescape(value) or value
+  end
+
   local command = {
     "dotnet",
     "test",
-    proj_root,
+    quote_if_needed(proj_root),
     filter_arg,
     "--results-directory",
-    vim.fn.fnamemodify(results_path, ":h"),
+    quote_if_needed(vim.fn.fnamemodify(results_path, ":h")),
     "--logger",
     '"trx;logfilename=' .. vim.fn.fnamemodify(results_path, ":t:h") .. '"',
   }
