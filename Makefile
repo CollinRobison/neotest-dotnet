@@ -1,6 +1,8 @@
 # we disable the `all` command because some external tool might run it automatically
 .SUFFIXES:
 
+NVIM_TREESITTER_REF ?= master
+
 all:
 
 # runs all the test files.
@@ -14,7 +16,7 @@ deps:
 	git clone --depth 1 https://github.com/echasnovski/mini.doc.git deps/mini.doc.nvim
 	git clone --depth 1 https://github.com/nvim-neotest/neotest.git deps/neotest
 	git clone --depth 1 https://github.com/nvim-lua/plenary.nvim.git deps/plenary
-	git clone --depth 1 https://github.com/nvim-treesitter/nvim-treesitter.git deps/nvim-treesitter
+	git clone --depth 1 --branch "$(NVIM_TREESITTER_REF)" https://github.com/nvim-treesitter/nvim-treesitter.git deps/nvim-treesitter
 	git clone --depth 1 https://github.com/nvim-neotest/nvim-nio deps/nvim-nio
 
 # installs deps before running tests, useful for the CI.
