@@ -21,14 +21,25 @@ if #vim.api.nvim_list_uis() == 0 then
   vim.cmd("runtime plugin/plenary.vim")
   vim.cmd("runtime lua/mini/doc.lua")
 
-  -- Setup test plugin dependencies
-  require("nvim-treesitter.configs").setup({
-    ensure_installed = "c_sharp",
-    sync_install = true,
-    highlight = {
-      enable = false,
-    },
-  })
+  vim.treesitter.language.register("c_sharp", { "cs", "csharp" })
+
+  local ok, ts_configs = pcall(require, "nvim-treesitter.configs")
+  if ok then
+    ts_configs.setup({
+      ensure_installed = "c_sharp",
+      sync_install = true,
+      highlight = {
+        enable = false,
+      },
+    })
+  else
+    -- nvim-treesitter's current API moved parser installation out of configs.
+    local current_ok, ts_config = pcall(require, "nvim-treesitter.config")
+    if current_ok then
+      ts_config.setup({ install_dir = vim.fn.getcwd() .. "/deps/nvim-treesitter-install" })
+      require("nvim-treesitter.install").install({ "c_sharp" }, { summary = false }):wait()
+    end
+  end
 end
 -- local M = {}
 --
