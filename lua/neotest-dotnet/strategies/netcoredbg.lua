@@ -7,7 +7,15 @@ local logger = require("neotest.logging")
 ---@param spec neotest.RunSpec
 ---@return neotest.StrategyResult?
 return function(spec)
-  local dap = require("dap")
+  local ok, dap = pcall(require, "dap")
+  if not ok then
+    error("neotest-dotnet: nvim-dap is required for debug strategy")
+  end
+
+  local adapter_name = spec.dap and spec.dap.adapter_name or "netcoredbg"
+  if not dap.adapters[adapter_name] then
+    error("neotest-dotnet: configure the nvim-dap adapter '" .. adapter_name .. "' first")
+  end
 
   local data_accum = FanoutAccum(function(prev, new)
     if not prev then
@@ -60,7 +68,7 @@ return function(spec)
           debugStarted = true
 
           dap.run(vim.tbl_extend("keep", {
-            type = spec.dap.adapter_name,
+            type = adapter_name,
             name = "attach - netcoredbg",
             request = "attach",
             processId = dotnet_test_pid,
