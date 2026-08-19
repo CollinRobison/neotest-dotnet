@@ -297,6 +297,7 @@ M.generate_test_results = function(output_file_path, tree, context_id)
         neotest_results[node_data.id] = neotest_results[node_data.id]
           or {
             status = intermediate_result.status,
+            output = output_file_path,
             short = node_data.full_name .. ":" .. intermediate_result.status,
             errors = {},
           }

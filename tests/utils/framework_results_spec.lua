@@ -79,6 +79,7 @@ describe("TRX result collection", function()
       local results = framework.module.generate_test_results(result_path, tree, "context")
 
       assert.equal("passed", results[path .. "::Fixtures::ResultTests::Passed"].status)
+      assert.equal(result_path, results[path .. "::Fixtures::ResultTests::Passed"].output)
       assert.equal("failed", results[path .. "::Fixtures::ResultTests::Failed"].status)
       assert.equal("skipped", results[path .. "::Fixtures::ResultTests::Skipped"].status)
       assert.same(
