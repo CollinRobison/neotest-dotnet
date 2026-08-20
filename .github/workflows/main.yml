@@ -41,10 +41,22 @@ jobs:
       - lint
       #- documentation
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 10
     strategy:
       matrix:
-        neovim_version: ['v0.10.0', 'v0.10.1', 'v0.10.2', 'v0.10.3', 'nightly']
+        include:
+          - neovim_version: 'v0.10.0'
+            nvim_treesitter_ref: 'v0.9.3'
+          - neovim_version: 'v0.10.1'
+            nvim_treesitter_ref: 'v0.9.3'
+          - neovim_version: 'v0.10.2'
+            nvim_treesitter_ref: 'v0.9.3'
+          - neovim_version: 'v0.10.3'
+            nvim_treesitter_ref: 'v0.9.3'
+          - neovim_version: 'v0.12.4'
+            nvim_treesitter_ref: 'master'
+          - neovim_version: 'nightly'
+            nvim_treesitter_ref: 'master'
     steps:
       - uses: actions/checkout@v3
       - run: date +%F > todays-date
@@ -59,7 +71,7 @@ jobs:
           neovim: true
           version: ${{ matrix.neovim_version }}
       - name: run tests
-        run: make test-ci
+        run: NVIM_TREESITTER_REF=${{ matrix.nvim_treesitter_ref }} make test-ci
   release:
     name: release
     if: ${{ github.ref == 'refs/heads/main' }}

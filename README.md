@@ -1,18 +1,11 @@
 <p align="center">
-<a href="https://github.com/Issafalcon/neotest-dotnet/actions/workflows/main.yml">
-  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/Issafalcon/neotest-dotnet/main.yml?label=main&style=for-the-badge">
+<a href="https://github.com/CollinRobison/neotest-dotnet/actions/workflows/main.yml">
+  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/CollinRobison/neotest-dotnet/main.yml?label=main&style=for-the-badge">
 </a>
-<a href="https://github.com/Issafalcon/neotest-dotnet/releases">
-  <img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/Issafalcon/neotest-dotnet?style=for-the-badge">
-</a>
-<a href="https://luarocks.org/modules/Issafalcon/neotest-dotnet">
-  <img alt="LuaRocks Pacakage" src="https://img.shields.io/luarocks/v/Issafalcon/neotest-dotnet?logo=lua&color=purple&style=for-the-badge">
+<a href="https://github.com/CollinRobison/neotest-dotnet/releases">
+  <img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/CollinRobison/neotest-dotnet?style=for-the-badge">
 </a>
 </p>
-
-# Looking for new maintainers!
-
-Please see https://github.com/Issafalcon/neotest-dotnet/discussions/142 for more details and background behind this move.
 
 # Neotest .NET
 
@@ -42,7 +35,7 @@ neotest-dotnet requires makes a number of assumptions about your environment:
     "nvim-neotest/neotest",
     requires = {
       {
-        "Issafalcon/neotest-dotnet",
+        "CollinRobison/neotest-dotnet",
       },
     }
   })
@@ -52,7 +45,7 @@ neotest-dotnet requires makes a number of assumptions about your environment:
 
 ```vim
     Plug 'https://github.com/nvim-neotest/neotest'
-    Plug 'https://github.com/Issafalcon/neotest-dotnet'
+    Plug 'https://github.com/CollinRobison/neotest-dotnet'
 ```
 
 # Usage
@@ -176,7 +169,7 @@ To see if your use case is supported, check the grids below. If it isn't there, 
 | `TestFixture` (Attribute)    | Class       | [TestFixture - Nunit](https://docs.nunit.org/articles/nunit/writing-tests/attributes/testfixture.html)       | :heavy_check_mark: |                                                                                                                                                                                                                                                         |
 | `TestCase()` (Attribute)     | Method      | [TestCase - Nunit](https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html)             | :heavy_check_mark: | Support for parameterized tests with inline parameters. Supports neotest 'run nearest' and 'run file' functionality                                                                                                                                     |
 | Nested Classes               | Class       |                                                                                                              | :heavy_check_mark: | Fully qualified name is corrected to include `+` when class is nested                                                                                                                                                                                   |
-| `Theory` (Attribute)         | Method      | [Theory - Nunit](https://docs.nunit.org/articles/nunit/writing-tests/attributes/theory.html)                 | :x:                | Currently has conflicts with XUnits `Theory` which is more commonly used                                                                                                                                                                                |
+| `Theory` (Attribute)         | Method      | [Theory - Nunit](https://docs.nunit.org/articles/nunit/writing-tests/attributes/theory.html)                 | :heavy_check_mark: | Discovered as a dynamically parameterized test group. When a file imports `NUnit.Framework`, it is distinguished from xUnit's identically named attribute. |
 | `TestCaseSource` (Attribute) | Method      | [TestCaseSource - NUnit](https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcasesource.html) | :heavy_check_mark: | Bundles all dynamically parameterized tests under one neotest listing (short output contains errors for all tests. One test failure displays failure indicator for entire test "grouping"). Supports neotest 'run nearest' and 'run file' functionality |
 
 ### xUnit
@@ -264,3 +257,19 @@ To run the plenary tests from CLI, in the root folder, run
 ```
 make test
 ```
+
+To run the real .NET integration fixtures (NUnit, xUnit, and MSTest) through adapter discovery, `build_spec`, and result parsing, run:
+
+```
+make integration-test
+```
+
+This target requires a `dotnet` SDK on `PATH`. Each fixture intentionally includes one failing and one skipped test so result-state mapping is verified.
+
+For an opt-in real DAP attach smoke test across NUnit, xUnit, and MSTest, provide paths to `nvim-dap` and `netcoredbg`:
+
+```
+DAP_RTP=/path/to/nvim-dap NETCOREDBG=/path/to/netcoredbg make dap-smoke
+```
+
+The smoke target runs a passing method from each framework, verifies a DAP session initializes and terminates, and requires `dotnet` on `PATH`.

@@ -11,7 +11,7 @@ local discovery_root = "project"
 
 DotnetNeotestAdapter.root = function(path)
   if discovery_root == "solution" then
-    return lib.files.match_root_pattern("*.sln")(path)
+    return lib.files.match_root_pattern("*.sln", "*.slnx")(path)
   else
     return lib.files.match_root_pattern("*.csproj", "*.fsproj")(path)
   end
@@ -61,8 +61,11 @@ DotnetNeotestAdapter._build_position = function(...)
   logger.debug("neotest-dotnet: Buil Position Args: ")
   logger.debug(args)
 
-  local framework =
-    FrameworkDiscovery.get_test_framework_utils_from_source(args[2], custom_attribute_args) -- args[2] is the content of the file
+  local framework = FrameworkDiscovery.get_test_framework_utils_from_source(
+    args[2],
+    custom_attribute_args
+  ) -- args[2] is the content of the file
+    or require("neotest-dotnet.xunit")
 
   logger.debug("neotest-dotnet: Framework: ")
   logger.debug(framework)
@@ -81,8 +84,10 @@ end
 ---@return neotest.Tree
 DotnetNeotestAdapter.discover_positions = function(path)
   local content = lib.files.read(path)
-  local test_framework =
-    FrameworkDiscovery.get_test_framework_utils_from_source(content, custom_attribute_args)
+  local test_framework = FrameworkDiscovery.get_test_framework_utils_from_source(
+    content,
+    custom_attribute_args
+  ) or require("neotest-dotnet.xunit")
   local framework_queries = test_framework.get_treesitter_queries(custom_attribute_args)
 
   local query = [[
@@ -135,6 +140,11 @@ DotnetNeotestAdapter.build_spec = function(args)
   local additional_args = args.dotnet_additional_args or dotnet_additional_args or nil
 
   local specs = build_spec_utils.create_specs(args.tree, nil, additional_args)
+
+  if not specs then
+    logger.debug("neotest-dotnet: No runnable test specs were created")
+    return nil
+  end
 
   logger.debug("neotest-dotnet: Created " .. #specs .. " specs, with contents: ")
   logger.debug(specs)
@@ -191,16 +201,22 @@ setmetatable(DotnetNeotestAdapter, {
 
     local function find_runsettings_files()
       local files = {}
-      for _, runsettingsFile in
-        ipairs(vim.fn.glob(vim.fn.getcwd() .. "**/*.runsettings", false, true))
-      do
-        table.insert(files, runsettingsFile)
-      end
+      local seen = {}
+      local cwd = vim.fn.getcwd()
+      local patterns = {
+        cwd .. "/*.runsettings",
+        cwd .. "/**/*.runsettings",
+        cwd .. "/.runsettings",
+        cwd .. "/**/.runsettings",
+      }
 
-      for _, runsettingsFile in
-        ipairs(vim.fn.glob(vim.fn.getcwd() .. "**/.runsettings", false, true))
-      do
-        table.insert(files, runsettingsFile)
+      for _, pattern in ipairs(patterns) do
+        for _, runsettings_file in ipairs(vim.fn.glob(pattern, false, true)) do
+          if not seen[runsettings_file] then
+            seen[runsettings_file] = true
+            table.insert(files, runsettings_file)
+          end
+        end
       end
 
       return files

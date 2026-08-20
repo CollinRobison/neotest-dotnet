@@ -4,7 +4,7 @@ TEST_INIT=tests/minimal_init.lua
 TEST_DIR=tests/
 
 if [[ -n $1 ]]; then
-  nvim --headless --noplugin -u ${TEST_INIT} \
+  nvim --headless --clean --noplugin -u ${TEST_INIT} \
     -c "PlenaryBustedFile $1" | tee "${tempfile}"
 else
   nvim --headless --clean --noplugin -u ${TEST_INIT} \

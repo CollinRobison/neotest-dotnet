@@ -1,16 +1,9 @@
 ---
 name: Push to Luarocks
 
+# LuaRocks publishing is intentionally disabled for this personal fork.
+# Run manually if package publishing is needed later.
 on:
-  push:
-    tags:
-      - '*'
-  release:
-    types:
-      - created
-    tags:
-      - '*'
-  pull_request: # Tests installing the generated rockspec on PR without uploading
   workflow_dispatch:
 
 jobs:

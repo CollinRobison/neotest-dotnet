@@ -47,7 +47,7 @@ function M.get_queries(custom_attributes)
     (method_declaration
       (attribute_list
         (attribute
-          name: (identifier) @attribute_name (#eq? @attribute_name "TestMethod")
+          name: (identifier) @attribute_name (#any-of? @attribute_name "TestMethod" ]] .. custom_fact_attributes .. [[)
         )
       )
       name: (identifier) @test.name

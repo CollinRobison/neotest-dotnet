@@ -52,13 +52,23 @@ function M.get_queries(custom_attributes)
       name: (identifier) @test.name
     ) @test.definition
 
+    ;; Matches NUnit Theory methods as one dynamically parameterized test group.
+    (method_declaration
+      (attribute_list
+        (attribute
+          name: (identifier) @attribute_name (#eq? @attribute_name "Theory")
+        )
+      )
+      name: (identifier) @test.name
+    ) @test.definition
+
     ;; Matches parameterized test methods
     (method_declaration
       (attribute_list
         (attribute
           name: (identifier) @attribute_name (#match? @attribute_name "^TestCase")
         )
-      )+
+      )
       name: (identifier) @test.parameterized.name
       parameters: (parameter_list
         (parameter

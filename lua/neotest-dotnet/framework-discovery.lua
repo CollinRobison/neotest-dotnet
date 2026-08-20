@@ -6,6 +6,15 @@ local async = require("neotest.async")
 
 local M = {}
 
+---@param capture userdata|table|nil
+---@return userdata|nil
+local function first_capture(capture)
+  if type(capture) == "table" then
+    return capture[1]
+  end
+  return capture
+end
+
 M.xunit_test_attributes = {
   "Fact",
   "Theory",
@@ -13,6 +22,7 @@ M.xunit_test_attributes = {
 
 M.nunit_test_attributes = {
   "Test",
+  "Theory",
   "TestCase",
   "TestCaseSource",
 }
@@ -113,11 +123,14 @@ function M.get_test_framework_utils_from_source(source, custom_attribute_args)
       and vim.treesitter.query.parse("c_sharp", framework_query)
     or vim.treesitter.parse_query("c_sharp", framework_query)
   for _, captures, _ in parsed_query:iter_matches(root, source, nil, nil, { all = false }) do
+    local capture = first_capture(captures[1])
     local test_attribute = vim.fn.has("nvim-0.9.0") == 1
-        and vim.treesitter.get_node_text(captures[1], source)
-      or vim.treesitter.query.get_node_text(captures[1], source)
+        and vim.treesitter.get_node_text(capture, source)
+      or vim.treesitter.query.get_node_text(capture, source)
     if test_attribute then
-      if
+      if test_attribute == "Theory" and source:find("using%s+NUnit%.Framework%s*;") then
+        return nunit
+      elseif
         string.find(xunit_attributes, test_attribute)
         or string.find(test_attribute, "SkippableFactAttribute")
       then

@@ -7,7 +7,25 @@ local logger = require("neotest.logging")
 ---@param spec neotest.RunSpec
 ---@return neotest.StrategyResult?
 return function(spec)
-  local dap = require("dap")
+  local ok, dap = pcall(require, "dap")
+  if not ok then
+    error("neotest-dotnet: nvim-dap is required for debug strategy")
+  end
+
+  local adapter_name = spec.dap and spec.dap.adapter_name or "netcoredbg"
+  local configured_adapter = dap.adapters[adapter_name]
+  if not configured_adapter then
+    error("neotest-dotnet: configure the nvim-dap adapter '" .. adapter_name .. "' first")
+  end
+  if
+    type(configured_adapter) == "table"
+    and configured_adapter.type == "executable"
+    and (not configured_adapter.command or vim.fn.executable(configured_adapter.command) == 0)
+  then
+    error(
+      "neotest-dotnet: netcoredbg executable is unavailable for adapter '" .. adapter_name .. "'"
+    )
+  end
 
   local data_accum = FanoutAccum(function(prev, new)
     if not prev then
@@ -60,7 +78,7 @@ return function(spec)
           debugStarted = true
 
           dap.run(vim.tbl_extend("keep", {
-            type = spec.dap.adapter_name,
+            type = adapter_name,
             name = "attach - netcoredbg",
             request = "attach",
             processId = dotnet_test_pid,

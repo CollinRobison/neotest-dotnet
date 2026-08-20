@@ -41,4 +41,6 @@ luac.out
 
 # Test dependencies
 deps/
-**/obj/*
+**/bin/
+**/obj/
+**/TestResults/

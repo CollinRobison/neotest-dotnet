@@ -26,16 +26,24 @@ end
 ---@param filter_arg string The filter argument to pass to the dotnet test command
 ---@param dotnet_additional_args table Any additional arguments to pass to the dotnet test command
 function BuildSpecUtils.create_single_spec(position, proj_root, filter_arg, dotnet_additional_args)
+  if not proj_root or proj_root == "" then
+    error("neotest-dotnet: no .csproj found for " .. position.path)
+  end
+
   local results_path = async.fn.tempname() .. ".trx"
   filter_arg = filter_arg or ""
+
+  local function quote_if_needed(value)
+    return value:find("[^%w%-%._/%+:]") and vim.fn.shellescape(value) or value
+  end
 
   local command = {
     "dotnet",
     "test",
-    proj_root,
+    quote_if_needed(proj_root),
     filter_arg,
     "--results-directory",
-    vim.fn.fnamemodify(results_path, ":h"),
+    quote_if_needed(vim.fn.fnamemodify(results_path, ":h")),
     "--logger",
     '"trx;logfilename=' .. vim.fn.fnamemodify(results_path, ":t:h") .. '"',
   }
@@ -112,7 +120,7 @@ function BuildSpecUtils.create_specs(tree, specs, dotnet_additional_args)
     for _, child in tree:iter_nodes() do
       local data = child:data()
       if data.is_class then
-        if data.framework == "xunit" then
+        if data.framework == "xunit" or data.framework == "mstest" then
           table.insert(filter, "FullyQualifiedName~" .. data.name)
         elseif data.framework == "nunit" then
           table.insert(filter, "Name~" .. data.name)
@@ -131,7 +139,10 @@ function BuildSpecUtils.create_specs(tree, specs, dotnet_additional_args)
     end
   end
 
-  return #specs < 0 and nil or specs
+  if #specs == 0 then
+    return nil
+  end
+  return specs
 end
 
 return BuildSpecUtils

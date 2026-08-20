@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.8.0] - Unreleased
+
+### Added
+
+- Real NUnit, xUnit, and MSTest integration fixtures exercised through adapter discovery, `build_spec`, and result parsing.
+- An `integration-test` Make target and release checklist.
+
+### Fixed
+
+- Shell quoting for project paths, result directories, and TRX logger arguments.
+- Fork-facing installation and status links.
+
+
 ## [1.7.0](https://github.com/Issafalcon/neotest-dotnet/compare/v1.6.5...v1.7.0) (2024-12-27)
 
 

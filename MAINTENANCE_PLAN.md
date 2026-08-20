@@ -14,6 +14,35 @@ This fork is intended to keep the `neotest-dotnet` adapter usable with current N
 
 The fork currently contains the upstream Lua adapter, Tree-sitter queries, DAP strategy, Plenary tests, GitHub Actions workflow, and Makefile. The existing test suite is the foundation for the maintenance work.
 
+## Handoff status
+
+The first maintenance pass is implemented on the `maintenance/baseline` branch. The latest committed change is `a2d2fac` (`support solution file roots`). The branch is pushed to the fork and has an open draft pull request.
+
+### Completed
+
+- Added and fetched the `upstream` remote; current upstream `main` was reviewed against the fork baseline.
+- Fixed Neovim 0.12 and current Tree-sitter query capture compatibility, including `iter_matches` capture lists.
+- Kept compatibility with the legacy nvim-treesitter API and added parser installation support for the current API.
+- Added CI coverage for Neovim 0.10.x, 0.12.4, and nightly. Neovim 0.10.x uses nvim-treesitter `v0.9.3`; newer versions use current `master`.
+- Added support and regression coverage for MSTest `DataRow` discovery and custom method attributes.
+- Fixed MSTest file-level filters and NUnit mixed `[Test]`/`[TestCase]` discovery.
+- Fixed singleton TRX result parsing, result identity matching, unknown outcomes, skipped results, and TRX output exposure.
+- Added discovery behavior for files without test attributes and actionable errors when a runnable test has no `.csproj`.
+- Added coverage for runsettings, additional `dotnet test` arguments, `.slnx` roots, empty files, framework discovery, and result states.
+- Added clear errors for missing `nvim-dap` or an unconfigured DAP adapter.
+- Added a real .NET integration target that runs NUnit, xUnit, and MSTest projects through adapter discovery, `build_spec`, and `results`; it validates passed, failed, and skipped result states and file-scoped MSTest identities.
+- Added and executed a real layout matrix: a multi-project solution with a nested project, `global.json`, inherited `Directory.Build.props`, a `net10.0;net9.0` project, and `.runsettings`.
+- Added real DAP smoke coverage for NUnit, xUnit, and MSTest method requests plus a file-level breakpoint and variable inspection; missing, unconfigured, and unavailable debugger dependencies give actionable errors.
+- Local `make test` and `make lint` pass. GitHub CI passes the compatibility matrix and lint job.
+
+### Still required
+
+- Extend end-to-end result coverage for stdout/stderr, exceptions, unusual display names, no-match runs, and parameterized results.
+- Extend the DAP smoke matrix to test test-host output and parameterized-test debug behavior.
+- Review temporary result/output cleanup and command argument quoting with real projects.
+
+The compatibility work is therefore in good shape, but the first maintained release is not ready until the real .NET integration and DAP work are complete.
+
 ## Goals
 
 1. Keep test discovery and result collection working with maintained Neovim and Neotest versions.

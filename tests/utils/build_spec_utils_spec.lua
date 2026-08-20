@@ -84,6 +84,7 @@ describe("create_specs", function()
   end)
 
   after_each(function()
+    vim.g.neotest_dotnet_runsettings_path = nil
     lib.files.match_root_pattern:revert()
     vim.fn.tempname:revert()
   end)
@@ -93,7 +94,7 @@ describe("create_specs", function()
       {
         command = "dotnet test "
           .. test_root_path
-          .. ' --filter "Name~UnitTest1" --results-directory /tmp/output --logger "trx;logfilename=test_result.trx"',
+          .. ' --filter "FullyQualifiedName~UnitTest1" --results-directory /tmp/output --logger "trx;logfilename=test_result.trx"',
         context = {
           file = "/home/issafalcon/repos/neotest-dotnet-tests/xunit/testproj1/UnitTest1.cs",
           id = "/home/issafalcon/repos/neotest-dotnet-tests/xunit/testproj1/UnitTest1.cs",
@@ -126,6 +127,7 @@ describe("create_specs", function()
             range = { 2, 0, 18, 1 },
             type = "namespace",
             is_class = true,
+            framework = "xunit",
           },
           {
             {
@@ -146,6 +148,106 @@ describe("create_specs", function()
 
     assert.equal(#expected_specs, #result)
     assert_spec_matches(expected_specs[1], result[1])
+  end)
+
+  it("should return nil when a file contains no runnable test classes", function()
+    local tree = Tree.from_list({
+      {
+        id = "/home/tests/Empty.cs",
+        name = "Empty.cs",
+        path = "/home/tests/Empty.cs",
+        range = { 0, 0, 1, 0 },
+        type = "file",
+      },
+    }, function(pos)
+      return pos.id
+    end)
+
+    assert.is_nil(BuildSpecUtils.create_specs(tree))
+  end)
+
+  it("should preserve additional arguments and runsettings", function()
+    vim.g.neotest_dotnet_runsettings_path = "/home/tests/test.runsettings"
+    local tree = Tree.from_list({
+      {
+        id = "/home/tests/MsTests.cs::Fixtures::Smoke",
+        name = "Smoke",
+        path = "/home/tests/MsTests.cs",
+        range = { 1, 0, 2, 0 },
+        type = "test",
+      },
+    }, function(pos)
+      return pos.id
+    end)
+
+    local result = BuildSpecUtils.create_specs(tree, nil, { "--framework net10.0" })
+
+    assert.equal(1, #result)
+    assert.equal(
+      'dotnet test /dummy/path/to/proj --filter FullyQualifiedName~"Fixtures.Smoke"'
+        .. ' --results-directory /tmp/output --logger "trx;logfilename=test_result.trx"'
+        .. " --framework net10.0 --settings /home/tests/test.runsettings",
+      result[1].command
+    )
+  end)
+
+  it("should report a missing project for a runnable test", function()
+    lib.files.match_root_pattern:revert()
+    stub(lib.files, "match_root_pattern", function()
+      return function()
+        return nil
+      end
+    end)
+
+    local tree = Tree.from_list({
+      {
+        id = "/home/tests/MsTests.cs::Fixtures::Smoke",
+        name = "Smoke",
+        path = "/home/tests/MsTests.cs",
+        range = { 1, 0, 2, 0 },
+        type = "test",
+      },
+    }, function(pos)
+      return pos.id
+    end)
+
+    assert.has_error(function()
+      BuildSpecUtils.create_specs(tree)
+    end, "neotest-dotnet: no .csproj found for /home/tests/MsTests.cs")
+  end)
+
+  it("should create a fully-qualified file filter for MSTest", function()
+    local tree = Tree.from_list({
+      {
+        id = "/home/tests/MsTests.cs",
+        name = "MsTests.cs",
+        path = "/home/tests/MsTests.cs",
+        range = { 0, 0, 10, 0 },
+        type = "file",
+      },
+      {
+        {
+          id = "/home/tests/MsTests.cs::MsTests",
+          name = "MsTests",
+          path = "/home/tests/MsTests.cs",
+          range = { 0, 0, 10, 0 },
+          type = "namespace",
+          is_class = true,
+          framework = "mstest",
+        },
+      },
+    }, function(pos)
+      return pos.id
+    end)
+
+    local result = BuildSpecUtils.create_specs(tree)
+
+    assert.equal(1, #result)
+    assert.equal(
+      'dotnet test /dummy/path/to/proj --filter "FullyQualifiedName~MsTests"'
+        .. ' --results-directory /tmp/output --logger "trx;logfilename=test_result.trx"',
+      result[1].command
+    )
   end)
 
   async.it("should return the correct specs when the position is 'namespace' type", function()
